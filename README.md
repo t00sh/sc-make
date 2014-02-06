@@ -1,43 +1,130 @@
-sc-make
-=======
+# NAME
 
-Tool for automating shellcode creation.
+sc-make - Shellcode Maker -
+Tool for automating shellcodes creation
 
+# SYNOPSIS
 
-###SYNOPSIS
-
-**sc-make [OPTIONS] file**
-
-###OPTIONS
+sc-make \[OPTIONS\] file
 
 
-**-t -test**
 
-Test shellcode with strace.
+# OPTIONS
 
-**-d -disassemble**
+- __\-t -test__
 
-Disassemble the shellcode.
+    Test shellcode with strace.
 
-**-o -out FORMAT**
+- __\-d -disassemble__
 
-Change the output format.
+    Disassemble the shellcode.
 
-Available format : c,perl,bash,asm,python. (default: perl)
+- __\-o -out__ FORMAT
 
-**-b -bad STRING**
+    Change the output format.
 
-Specify the bad chars you don't want in shellcode.
-Example : -bad "\x00\x0a"
+    Available format : c,perl,bash,asm,python. (default: perl)
 
-**-h -help**
+- __\-a -arch__ ARCH
 
-Print short help.
+    Specify the architecture (default: x86)
+    Available arch: x86, arm
 
-**-i -info**
+- __\-b -bad__ STRING
 
-Print long help.
+    Specify the bad chars you don't want in shellcode.
+    Example : -bad "\\x00\\x0a"
 
-**-v -version**
+- __\-h -help__
 
-Print program version.
+    Print short help.
+
+- __\-i -info__
+
+    Print long help.
+
+- __\-v -version__
+
+    Print program version.
+
+
+
+# DESCRIPTION
+
+__This program__ is a simply tool for assembling, disassembling,
+and testing shellcodes.
+
+Shellcodes must be wrote in __ASM__ with __NASM__ syntax.
+
+
+
+# VERSION
+
+V1.0
+
+# AUTHOR
+
+Written by __Tosh__
+
+(duretsimon73 -at- gmail -dot- com)
+
+
+
+# LICENCE
+
+This program is a free software. 
+It is distrubued with the terms of the __GPLv3 licence__.
+
+
+
+# DEPENDS
+
+These programs are needed to run correctly sc-make :
+
+- __objdump__
+- __nasm__
+- __as__
+- __strace__
+- __gcc__
+- __perl__
+
+
+
+# EXAMPLES
+
+- __sc-make -o perl shellcode.asm__       \# Print shellcode in Perl format
+
+    \# SHELLCODE LENGTH: 25
+
+
+
+    my $shellcode = "\\x31\\xc0\\x50\\x6a\\x68\\x68\\x2f\\x62\\x61\\x73\\x68\\x2f" . 
+                    "\\x62\\x69\\x6e\\x89\\xe3\\x89\\xc1\\x89\\xc2\\xb0\\x0b\\xcd" . 
+                    "\\x80";
+
+- __sc-make -o python shellcode.asm__     \# Print shellcode in Python format
+
+    \# SHELLCODE LENGTH: 25
+
+
+
+    shellcode = ("\\x31\\xc0\\x50\\x6a\\x68\\x68\\x2f\\x62\\x61\\x73\\x68\\x2f" 
+                "\\x62\\x69\\x6e\\x89\\xe3\\x89\\xc1\\x89\\xc2\\xb0\\x0b\\xcd" 
+                "\\x80");
+
+- __sc-make -o asm shellcode.asm__        \# Print shellcode in ASM format
+
+    ;; SHELLCODE LENGTH: 25
+
+
+
+    shellcode: 
+        db 0x31,0xc0,0x50,0x6a,0x68,0x68,0x2f,0x62,0x61,0x73,0x68,0x2f
+        db 0x62,0x69,0x6e,0x89,0xe3,0x89,0xc1,0x89,0xc2,0xb0,0x0b,0xcd
+        db 0x80
+
+- __sc-make -t shellcode.asm__            \# Test shellcode with strace
+- __sc-make -d shellcode.asm__            \# Disassemble shellcode with objdump
+- __sc-make -b "\\x00\\x0a"__               \# Print shellcode if it don't contain NUL and 0x0a byte
+
+

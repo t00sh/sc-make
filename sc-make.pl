@@ -396,7 +396,7 @@ sub END {
 =head1 NAME
 
 sc-make - Shellcode Maker -
-Make, test and disassemble shellcodes.
+Tool for automating shellcodes creation
 
 =head1 SYNOPSIS
 

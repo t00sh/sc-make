@@ -4,42 +4,40 @@ sc-make
 Tool for automating shellcode creation.
 
 
-===SYNOPSIS
+###SYNOPSIS
 
-```
-sc-make [OPTIONS] file
-```
+**sc-make [OPTIONS] file**
 
-===OPTIONS
-```
-        -t -test
+###OPTIONS
+
+
+**-t -test**
 
 Test shellcode with strace.
 
-        -d -disassemble
+**-d -disassemble**
 
 Disassemble the shellcode.
 
-        -o -out FORMAT
+**-o -out FORMAT**
 
 Change the output format.
 
 Available format : c,perl,bash,asm,python. (default: perl)
 
-        -b -bad STRING
+**-b -bad STRING**
 
-Specify the bad chars you don\u2019t want in shellcode.
-Example : -bad « \x00\x0a »
+Specify the bad chars you don't want in shellcode.
+Example : -bad "\x00\x0a"
 
-        -h -help
+**-h -help**
 
 Print short help.
 
-        -i -info
+**-i -info**
 
 Print long help.
 
-        -v -version
+**-v -version**
 
 Print program version.
-```

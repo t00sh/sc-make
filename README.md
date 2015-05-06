@@ -28,7 +28,7 @@ sc-make \[OPTIONS\] file
 - __\-a -arch__ ARCH
 
     Specify the architecture (default: x86)
-    Available arch: x86, arm
+    Available arch: x86, arm, x86-64
 
 - __\-b -bad__ STRING
 

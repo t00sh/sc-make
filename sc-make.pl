@@ -34,7 +34,7 @@ sub main {
     $OPT{o} = 'perl' unless($OPT{o});
     $OPT{a} = 'x86' unless($OPT{a});
 
-    die "Bad arch ($OPT{a}) specified !\n" unless(grep { $OPT{a} eq $_ } ('x86', 'arm'));
+    die "Bad arch ($OPT{a}) specified !\n" unless(grep { $OPT{a} eq $_ } ('x86', 'arm', 'x86-64'));
 
     die "Assembly failed !\n" unless($bin = sc_assemble($ARGV[0], $OPT{a}));
     die "Shellcode extraction failed !\n" unless($sc = sc_extract($bin, $OPT{a}));
@@ -120,6 +120,7 @@ sub sc_disasm {
     my $cmd;
 
     $cmd = "objdump -d -Mintel $bin|" if($arch eq 'x86');
+    $cmd = "objdump -d -Mintel $bin|" if($arch eq 'x86-64');
     $cmd = "objdump -d $bin|" if($arch eq 'arm');
     
     unless(open F, $cmd) {
@@ -142,6 +143,7 @@ sub sc_assemble {
     push @TMP_FILES, $bin;
 
     `nasm $asm -f elf -o $bin` if($arch eq 'x86');
+    `nasm $asm -f elf64 -o $bin` if($arch eq 'x86-64');
     `as $asm -o $bin` if($arch eq 'arm');
 
     return undef if($?);
@@ -151,6 +153,29 @@ sub sc_assemble {
 }
 
 sub sc_extract_x86 {
+   my ($bin) = @_;
+    my $sc;
+    my $cmd;
+
+    $cmd = "objdump -d -Mintel $bin|";
+
+    unless(open(F, $cmd)) {
+	warn "Failed to open objdump pipe $bin : $!\n";
+	return undef;
+    }
+
+    while(defined(my $l = <F>)) {
+	$l =~ s/^\s*[0-9a-f]+:\s+//;
+	while($l =~ m/^([a-f0-9]{2})\s/) {
+	    $sc .= chr(hex("0x$1"));
+	    $l = substr($l, 3);
+	}
+    }
+
+    return $sc;
+}
+
+sub sc_extract_x86_64 {
    my ($bin) = @_;
     my $sc;
     my $cmd;
@@ -203,6 +228,7 @@ sub sc_extract {
     my $sc;
     
     $sc = sc_extract_x86($bin) if($arch eq 'x86');
+    $sc = sc_extract_x86_64($bin) if($arch eq 'x86-64');
     $sc = sc_extract_arm($bin) if($arch eq 'arm');
 
     return $sc;
@@ -424,7 +450,7 @@ Available format : c,perl,bash,asm,python. (default: perl)
 =item B<-a -arch> ARCH
 
 Specify the architecture (default: x86)
-Available arch: x86, arm
+Available arch: x86, x86-64, arm
 
 =item B<-b -bad> STRING
 

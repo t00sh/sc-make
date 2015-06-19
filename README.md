@@ -23,7 +23,7 @@ sc-make \[OPTIONS\] file
 
     Change the output format.
 
-    Available format : c,perl,bash,asm,python. (default: perl)
+    Available format : c,perl,bash,asm,python,raw. (default: perl)
 
 - __\-a -arch__ ARCH
 

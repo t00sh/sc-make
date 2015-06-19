@@ -335,6 +335,20 @@ sub sc_print_python {
     print "\");\n";
 }
 
+# Print shellcode (raw output)
+sub sc_print_raw {
+    my $sc = shift;
+
+    print 'SHELLCODE LENGTH: ' . length($sc) . "\n\n";
+    
+    while(length($sc) > 0) {
+
+	printf "\\x%02x", ord $sc;
+	$sc = substr($sc, 1);
+    }
+    print "\n";
+}
+
 # Print shellcode
 # @RETURN undef if error.
 sub sc_print {
@@ -350,6 +364,8 @@ sub sc_print {
 	sc_print_bash($sc);
     } elsif($out eq 'python') {
 	sc_print_python($sc);
+    } elsif($out eq 'raw') {
+	sc_print_raw($sc);
     } else {
 	warn "Unvailable output format <$out>\n";
 	return undef;
@@ -445,7 +461,7 @@ Disassemble the shellcode.
 
 Change the output format.
 
-Available format : c,perl,bash,asm,python. (default: perl)
+Available format : c,perl,bash,asm,python,raw. (default: perl)
 
 =item B<-a -arch> ARCH
 

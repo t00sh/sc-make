@@ -4,6 +4,8 @@ use strict;
 use warnings;
 use Getopt::Long;
 use Pod::Usage;
+use Cwd 'abs_path';
+use File::Basename;
 
 our @TMP_FILES;
 
@@ -14,6 +16,7 @@ main();
 
 sub main {
     my ($sc, $bin);
+    my ($dir, $path);
     my %OPT;
 
     GetOptions(
@@ -34,9 +37,14 @@ sub main {
     $OPT{o} = 'raw' unless($OPT{o});
     $OPT{a} = 'x86' unless($OPT{a});
 
+    $path = abs_path($ARGV[0]);
+    $dir  = dirname($path);
+
+    die "Can't chdir($dir) : $!\n" unless(chdir($dir));
+
     die "Bad arch ($OPT{a}) specified !\n" unless(grep { $OPT{a} eq $_ } ('x86', 'arm', 'x86-64'));
 
-    die "Assembly failed !\n" unless($bin = sc_assemble($ARGV[0], $OPT{a}));
+    die "Assembly failed !\n" unless($bin = sc_assemble($path, $OPT{a}));
     die "Shellcode extraction failed !\n" unless($sc = sc_extract($bin, $OPT{a}));
     if($OPT{d}){
         die "Disassembly failed !\n" unless(sc_disasm($bin, $OPT{o}, $OPT{a}));

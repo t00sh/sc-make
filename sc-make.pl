@@ -339,18 +339,18 @@ sub sc_print_python {
     my $n = 0;
 
     print '# SHELLCODE LENGTH: ' . length($sc) . "\n\n\n";
-    print 'shellcode = ("';
+    print 'shellcode = "';
 
     while(length($sc) > 0) {
         if($n >= 12) {
-            print "\" \n             \"";
+            print "\" + \\\n            \"";
             $n = 0;
         }
         printf "\\x%02x", ord $sc;
         $sc = substr($sc, 1);
         $n++;
     }
-    print "\");\n";
+    print "\"\n";
 }
 
 # Print shellcode (raw output)

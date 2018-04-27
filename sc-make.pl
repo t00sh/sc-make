@@ -106,6 +106,8 @@ sub sc_test {
         `gcc -m32 -Wall $c_source -g -o $bin`;
     } elsif($arch eq 'x86-64') {
         `gcc -m64 -Wall $c_source -g -o $bin`;
+    } elsif($arch eq 'arm') {
+        `arm-none-eabi-gcc $c_source -g -o $bin`;
     } else {
         die "[-] Arch not supported for testing : $arch\n";
     }
@@ -136,7 +138,7 @@ sub sc_disasm {
 
     $cmd = "objdump -d -Mintel $bin|" if($arch eq 'x86');
     $cmd = "objdump -d -Mintel $bin|" if($arch eq 'x86-64');
-    $cmd = "objdump -d $bin|" if($arch eq 'arm');
+    $cmd = "arm-none-eabi-objdump -d $bin|" if($arch eq 'arm');
 
     unless(open F, $cmd) {
         warn "Failed to objdump $bin : $!\n";
@@ -159,7 +161,7 @@ sub sc_assemble {
 
     `nasm $asm -f elf -o $bin` if($arch eq 'x86');
     `nasm $asm -f elf64 -o $bin` if($arch eq 'x86-64');
-    `as $asm -o $bin` if($arch eq 'arm');
+    `arm-none-eabi-as $asm -o $bin` if($arch eq 'arm');
 
     return undef if($?);
 
@@ -218,7 +220,7 @@ sub sc_extract_arm {
     my $sc;
     my $cmd;
 
-    $cmd = "objdump -d $bin|";
+    $cmd = "arm-none-eabi-objdump -d $bin|";
 
     unless(open(F, $cmd)) {
         warn "Failed to open objdump pipe $bin : $!\n";
@@ -227,9 +229,10 @@ sub sc_extract_arm {
 
     while(defined(my $l = <F>)) {
         $l =~ s/.+:\s+//;
-        if($l =~ m/^([a-f0-9]{4,8})\s/) {
+        if($l =~ m/^([a-f0-9]{2,8})\s/) {
             $sc .= pack('L', hex("0x$1")) if(length $1 == 8);
             $sc .= pack('S', hex("0x$1")) if(length $1 == 4);
+            $sc .= pack('B', hex("0x$1")) if(length $1 == 2);
         }
     }
 
